@@ -746,3 +746,109 @@ export class AfricanMarketsAdapter implements BrokerAdapter {
     return this.realTimeCurrencyRates[currency.toUpperCase()] || 1.0;
   }
 }
+
+/**
+ * 5. LocalBrokerAdapter Implementation (Regional Placeholder)
+ * Acts as the dedicated integration layer for regional/local South African and Pan-African
+ * brokers that do not provide public retail REST endpoints, instead wrapping FIX (Financial
+ * Information eXchange) or proprietary enterprise-facing REST gateways.
+ * 
+ * Supports regional exchanges (JSE, NGX, NSE) with focus on regulatory compliance,
+ * exchange control approvals, and localized order queues.
+ */
+export class LocalBrokerAdapter implements BrokerAdapter {
+  public brokerId = 'local_broker';
+  public brokerName = 'NGL Local Institutional Gateway (FIX)';
+  public supportedCurrencies = ['ZAR', 'NGN', 'KES', 'USD'];
+  public supportedMarkets = ['JSE Equities', 'NGX Equities', 'NSE Equities', 'SDR & Sovereign Bonds'];
+
+  private fixHost: string;
+  private senderCompId: string;
+  private targetCompId: string;
+
+  constructor(
+    fixHost = 'fix.standardbank.co.za:9800',
+    senderCompId = 'NGL_TRADEMIND_PROD',
+    targetCompId = 'SBSA_EXECUTION_DESK'
+  ) {
+    this.fixHost = fixHost;
+    this.senderCompId = senderCompId;
+    this.targetCompId = targetCompId;
+  }
+
+  async getBalance(): Promise<BalanceInfo> {
+    // Mimicking FIX Protocol MsgType: MarketDataRequest (frequent polling/refresh)
+    // and AccountBalanceReport over the Standard Bank / IRESS API
+    return {
+      currency: 'ZAR',
+      balance: 1500000.00, // ZAR
+      equity: 1500000.00,
+      availableMargin: 1500000.00, // Cash accounts have 100% margin requirements locally
+      buyingPower: 1500000.00,
+      unrealizedPl: 0.00
+    };
+  }
+
+  async getPositions(): Promise<Position[]> {
+    // In production, queries local broker database or requests FIX PositionReport (MsgType = AP)
+    return [
+      {
+        symbol: 'NPN', // Naspers on JSE
+        quantity: 100,
+        avgEntryPrice: 3410.00,
+        currentPrice: 3420.00,
+        marketValue: 342000.00,
+        unrealizedPl: 1000.00,
+        unrealizedPlPercentage: 0.29,
+        side: 'LONG',
+        currency: 'ZAR',
+        exchange: 'JSE'
+      }
+    ];
+  }
+
+  async placeOrder(order: OrderPayload): Promise<{
+    orderId: string;
+    status: string;
+    filledPrice: number;
+    message: string;
+    timestamp: string;
+  }> {
+    // 1. Regulatory Guardrail check (e.g. SARB cross-border currency regulations)
+    if (order.symbol.includes('ZAR') && order.quantity * (order.price || 1) > 1000000) {
+      return {
+        orderId: 'local_fail_regulatory',
+        status: 'REJECTED',
+        filledPrice: 0,
+        message: `REJECTED: Standard SARB reporting limit triggered. Single transaction value exceeds ZAR 1,000,000 threshold. Manual exchange control override required.`,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    const orderId = 'fix_clord_' + Math.floor(Math.random() * 1000000);
+    const mockFill = order.price || 3420.00;
+
+    return {
+      orderId,
+      status: 'SENT_TO_EXCHANGE',
+      filledPrice: mockFill,
+      message: `FIX MsgType 'D' (New Order Single) transmitted to ${this.targetCompId} via ${this.fixHost}. Settled locally in ZAR/KES/NGN with mandatory trade reporting.`,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async closePosition(symbol: string): Promise<{
+    orderId: string;
+    status: string;
+    message: string;
+    timestamp: string;
+  }> {
+    return {
+      orderId: 'fix_cancel_' + Math.floor(Math.random() * 1000000),
+      status: 'CANCELLED_OR_CLOSED',
+      message: `FIX MsgType 'G' (Order Cancel/Replace Request) routed to clear JSE/NGX/NSE inventory for ticker ${symbol}.`,
+      timestamp: new Date().toISOString()
+    };
+  }
+}
+

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { BrokerName, CodeLanguage, EndpointInfo } from '../types';
 import { ENDPOINTS_BY_BROKER, generateSnippet, computePseudoHmac } from '../data';
+import { MarketMonitor } from './MarketMonitor';
 
 interface PlaygroundProps {
   initialBroker?: BrokerName;
@@ -466,7 +467,8 @@ export const Playground: React.FC<PlaygroundProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       {/* Parameters Panel */}
       <div className="lg:col-span-5 bg-white border border-zinc-150 rounded-xl shadow-xs overflow-hidden">
         <div className="border-b border-zinc-100 bg-zinc-50/50 p-4">
@@ -703,6 +705,8 @@ export const Playground: React.FC<PlaygroundProps> = ({
           </div>
         </div>
       </div>
+      </div>
+      <MarketMonitor />
     </div>
   );
 };

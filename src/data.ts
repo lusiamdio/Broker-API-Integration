@@ -63,8 +63,24 @@ export const DOC_SECTIONS: Section[] = [
     ]
   },
   {
+    id: 'ledger',
+    title: '6. Multi-Currency Ledger Engine',
+    subtitle: 'Double-entry bookkeeping system across 10+ African currencies',
+    subsections: [
+      { id: 'ledger-overview', title: '6.1 Architecture & Core Principles' },
+      { id: 'ledger-models', title: '6.2 Domain Model Dataclasses' },
+      { id: 'ledger-service', title: '6.3 Core Posting Service' },
+      { id: 'ledger-operations', title: '6.4 High-Level Business Operations' },
+      { id: 'ledger-helpers', title: '6.5 Currency Minor-Unit Helpers' },
+      { id: 'ledger-db', title: '6.6 Connection & Transaction Pools' },
+      { id: 'ledger-exceptions', title: '6.7 Exceptional Control States' },
+      { id: 'ledger-sql', title: '6.8 PostgreSQL Relational Schema' },
+      { id: 'ledger-usage', title: '6.9 End-to-End Operational Flow' }
+    ]
+  },
+  {
     id: 'matrix',
-    title: '6. Quick Reference Matrix',
+    title: '7. Quick Reference Matrix',
     subtitle: 'Compare limits, authentication, environments, and routing configurations'
   }
 ];

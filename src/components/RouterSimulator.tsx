@@ -144,6 +144,19 @@ export const RouterSimulator: React.FC = () => {
 
     // 1. African Stock markets detection
     const isAfricanAsset = africanAdapter.africanAssets[s] !== undefined;
+    if (s === 'NPN' || s === 'NASPERS') {
+      return {
+        matchedBroker: 'african_markets',
+        brokerName: 'NGL Local Institutional Gateway (FIX)',
+        assetClass: 'Local South African Blue-Chip (JSE)',
+        strategy: 'LocalBrokerAdapter -> Institutional FIX Protocol MsgType D',
+        adapterMethod: `placeOrder({ symbol: "NPN", quantity: ${quantity}, side: "${side}" })`,
+        endpointUrl: `fix://fix.standardbank.co.za:9800`,
+        isSupported: true,
+        notes: `Routed via LocalBrokerAdapter using high-frequency FIX session to Standard Bank Share Trading desk. Enforces South African Reserve Bank (SARB) local liquidity and exchange control thresholds (ZAR 1,000,000 reporting limits).`
+      };
+    }
+
     if (isAfricanAsset) {
       const asset = africanAdapter.africanAssets[s];
       return {
@@ -613,6 +626,7 @@ export const RouterSimulator: React.FC = () => {
               <div className="flex flex-wrap gap-1.5">
                 {[
                   { label: 'MTN (South Africa JSE)', val: 'MTN' },
+                  { label: 'NPN (JSE Institutional FIX)', val: 'NPN' },
                   { label: 'DANGCEM (Nigeria NGX)', val: 'DANGCEM' },
                   { label: 'SCOM (Kenya NSE)', val: 'SCOM' },
                   { label: 'COMI (Egypt EGX)', val: 'COMI' },

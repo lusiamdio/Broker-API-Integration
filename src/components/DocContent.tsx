@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Building2, 
   Cpu, 
@@ -12,9 +12,19 @@ import {
   Info,
   Clock,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Coins,
+  FileCode,
+  Database,
+  Copy,
+  Check,
+  Lock,
+  Scale,
+  FileText,
+  BookOpen
 } from 'lucide-react';
 import { BROKER_METRIC_CARDS } from '../data';
+import { LEDGER_FILES, LedgerFile } from '../ledger_data';
 
 interface DocContentProps {
   activeSection: string;
@@ -22,6 +32,17 @@ interface DocContentProps {
 }
 
 export const DocContent: React.FC<DocContentProps> = ({ activeSection, onJumpToPlayground }) => {
+  const [selectedLedgerFile, setSelectedLedgerFile] = useState<LedgerFile>(LEDGER_FILES[0]);
+  const [copiedFile, setCopiedFile] = useState<string | null>(null);
+
+  const handleCopyCode = (file: LedgerFile) => {
+    navigator.clipboard.writeText(file.code);
+    setCopiedFile(file.name);
+    setTimeout(() => {
+      setCopiedFile(null);
+    }, 2000);
+  };
+
   const isSectionActive = (id: string) => {
     return activeSection === 'all' || activeSection === id;
   };
@@ -695,6 +716,55 @@ Body: symbol=BTCUSDT&side=SELL&quantity=0.01&price=62500&stopPrice=58500&stopLim
               </div>
             </div>
 
+            {/* 5.4 Regional Compliance & African Regulatory Factors */}
+            <div id="regional-compliance" className="scroll-mt-24 space-y-4 pt-4 border-t border-zinc-100">
+              <h3 className="text-base font-bold text-zinc-900 flex items-center gap-2">
+                <Globe className="h-4 w-4 text-indigo-600" />
+                5.4 Regional Compliance & African Regulatory Factors
+              </h3>
+              <p className="text-sm leading-relaxed">
+                Integrating regional African exchanges (such as the JSE, NGX, and NSE) and trading local currency pairs involves navigating distinct capital constraints and compliance reporting rails. The TradeMind system enforces these safety blocks programmatically:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl border border-zinc-150 bg-zinc-50/50 space-y-2">
+                  <h4 className="text-xs font-bold font-mono text-zinc-800 uppercase tracking-wide flex items-center gap-1.5">
+                    <CheckCircle className="h-3.5 w-3.5 text-emerald-600" />
+                    Cross-Border Capital Controls
+                  </h4>
+                  <ul className="text-xs text-zinc-600 space-y-1.5 list-disc pl-4 leading-relaxed">
+                    <li>
+                      <strong>SARB Limits (South Africa):</strong> Single-day cross-border outbound capital transactions exceeding ZAR 1,000,000 are subject to mandatory <em>South African Reserve Bank</em> reporting. Trades above this size are flagged and routed to compliance.
+                    </li>
+                    <li>
+                      <strong>CBN Liquidity (Nigeria):</strong> The Central Bank of Nigeria enforces strict dual-exchange rate windows. LocalBrokerAdapter routes NGX orders to local settlement commercial banks to capture the best market rate (NAFEM).
+                    </li>
+                    <li>
+                      <strong>CBK Guidelines (Kenya):</strong> The Central Bank of Kenya maintains standard reporting on foreign exchange settlements over USD 50,000 equivalent.
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="p-4 rounded-xl border border-zinc-150 bg-zinc-50/50 space-y-2">
+                  <h4 className="text-xs font-bold font-mono text-zinc-800 uppercase tracking-wide flex items-center gap-1.5">
+                    <CheckCircle className="h-3.5 w-3.5 text-indigo-600" />
+                    Exchange Mechanics & Liquidity
+                  </h4>
+                  <ul className="text-xs text-zinc-600 space-y-1.5 list-disc pl-4 leading-relaxed">
+                    <li>
+                      <strong>Order Book Density:</strong> Compared to NYSE or Nasdaq, blue-chip stocks on JSE or NGX display lower order book density and wider spreads during off-peak local business hours. Slippage controls are set at a maximum 0.5% threshold.
+                    </li>
+                    <li>
+                      <strong>Settlement Cycles:</strong> The JSE operates under a T+3 settlement cycle (three business days post-execution) for standard retail equities, which differs from the standard T+1 cycle currently enforced in the US.
+                    </li>
+                    <li>
+                      <strong>Local Cash Vaulting:</strong> Multilateral currency buffers are stored in local escrow vaults to allow instant localized trading without waiting for slow cross-border SWIFT wire settlements.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             {/* Circuit Breakers and Risk Engine */}
             <div id="circuits" className="scroll-mt-24 p-5 rounded-xl border border-zinc-200 bg-zinc-50 space-y-3">
               <div className="flex items-center gap-2.5 font-semibold text-zinc-900">
@@ -712,7 +782,220 @@ Body: symbol=BTCUSDT&side=SELL&quantity=0.01&price=62500&stopPrice=58500&stopLim
         </section>
       )}
 
-      {/* 6. Quick Reference Matrix */}
+      {/* 6. Multi-Currency Ledger Engine */}
+      {isSectionActive('ledger') && (
+        <section id="ledger" className="scroll-mt-24 space-y-8 animate-fade-in">
+          <div className="border-b border-zinc-150 pb-5">
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full animate-pulse">
+              Core Ledger Implementation
+            </span>
+            <h2 className="text-2xl font-bold tracking-tight text-zinc-900 mt-3 sm:text-3xl">
+              6. Multi-Currency Ledger Engine
+            </h2>
+            <p className="mt-2 text-sm text-zinc-500">
+              A high-integrity double-entry bookkeeping engine supporting 10+ African currencies on PostgreSQL with absolute precision.
+            </p>
+          </div>
+
+          <div className="prose prose-zinc max-w-none text-zinc-600 space-y-8">
+            
+            {/* 6.1 Overview */}
+            <div id="ledger-overview" className="scroll-mt-24 space-y-4">
+              <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+                <Scale className="h-5 w-5 text-indigo-600" />
+                6.1 Architecture & Core Bookkeeping Principles
+              </h3>
+              <p className="text-sm leading-relaxed">
+                To guarantee financial consistency across highly volatile cross-border African corridors, the <strong>Afriquant Xchange Ledger</strong> implements strict <em>double-entry bookkeeping</em> standards. Every monetary event must be balanced such that the sum of debits equals the sum of credits per currency within a single atomic transaction.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-xl border border-zinc-200 bg-white space-y-2">
+                  <div className="h-8 w-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <Lock className="h-4 w-4" />
+                  </div>
+                  <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">Immutable Records</h4>
+                  <p className="text-[11px] text-zinc-500 leading-relaxed">
+                    Ledger entries are completely immutable. Reversing or correcting adjustments must be written as fresh balancing transactions referencing <code className="bg-zinc-50 px-1 py-0.5 rounded text-zinc-700">reversal_of_entry_id</code>, never via <code className="text-rose-600">UPDATE</code> or <code className="text-rose-600">DELETE</code> operations.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl border border-zinc-200 bg-white space-y-2">
+                  <div className="h-8 w-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <Coins className="h-4 w-4" />
+                  </div>
+                  <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">No Float precision</h4>
+                  <p className="text-[11px] text-zinc-500 leading-relaxed">
+                    All monetary values are represented strictly as integers in <strong>minor units</strong> (e.g., cents, satoshis). Floats are forbidden in the core database schema and posting engine to eliminate round-off drift.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl border border-zinc-200 bg-white space-y-2">
+                  <div className="h-8 w-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <Zap className="h-4 w-4" />
+                  </div>
+                  <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">Deferred DB Triggers</h4>
+                  <p className="text-[11px] text-zinc-500 leading-relaxed">
+                    A dual-layer defense validates balance in Python code first (fast failing), and relies on a PostgreSQL deferred constraint trigger checking <code className="text-[10px] bg-zinc-50 px-1 py-0.5 rounded">debits == credits</code> at the transaction commit boundary.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 6.2 Codebase Browser */}
+            <div className="scroll-mt-24 space-y-4">
+              <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+                <FileCode className="h-5 w-5 text-indigo-600" />
+                6.2 Interactive Ledger Code Explorer
+              </h3>
+              <p className="text-sm">
+                Examine each of the modules in the multi-currency ledger skeleton. Click on any file to load its description, dependencies, and production-ready source code:
+              </p>
+
+              {/* Code Explorer Interface */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start rounded-xl border border-zinc-200 bg-zinc-50/50 overflow-hidden">
+                
+                {/* File Selector Sidebar */}
+                <div className="lg:col-span-4 bg-white border-r border-zinc-200 p-4 space-y-1.5 h-full min-h-[380px]">
+                  <span className="text-[10px] font-mono text-zinc-400 uppercase font-bold tracking-wider px-2 block mb-2">
+                    Ledger Source Files
+                  </span>
+                  {LEDGER_FILES.map((file) => {
+                    const isActive = selectedLedgerFile.name === file.name;
+                    return (
+                      <button
+                        key={file.name}
+                        onClick={() => setSelectedLedgerFile(file)}
+                        className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-between ${
+                          isActive
+                            ? 'bg-indigo-50 text-indigo-600 border border-indigo-100 font-bold'
+                            : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 truncate">
+                          {file.name.endsWith('.py') ? (
+                            <FileCode className={`h-4 w-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-zinc-400'}`} />
+                          ) : (
+                            <Database className={`h-4 w-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-zinc-400'}`} />
+                          )}
+                          <span className="truncate">{file.name}</span>
+                        </div>
+                        <ChevronRight className={`h-3.5 w-3.5 transition-transform shrink-0 ${isActive ? 'rotate-90 text-indigo-600' : 'text-zinc-300'}`} />
+                      </button>
+                    );
+                  })}
+
+                  <div className="pt-4 border-t border-zinc-100 mt-4 px-2">
+                    <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 tracking-wider block">
+                      Target Stack
+                    </span>
+                    <span className="text-xs font-medium text-zinc-700 block mt-1">
+                      PostgreSQL 14+ / Python 3.10+
+                    </span>
+                    <span className="text-[10px] text-zinc-500 block leading-relaxed mt-0.5">
+                      Uses standard connection pool wrappers and PL/pgSQL constraint triggers.
+                    </span>
+                  </div>
+                </div>
+
+                {/* File Viewer Pane */}
+                <div className="lg:col-span-8 p-6 space-y-4 flex flex-col justify-between min-h-[460px]">
+                  
+                  {/* File Info Header */}
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-xs font-mono font-extrabold px-2.5 py-1 rounded bg-zinc-200/60 text-zinc-800">
+                          {selectedLedgerFile.language.toUpperCase()}
+                        </span>
+                        <span className="text-sm font-bold text-zinc-900 font-mono">
+                          {selectedLedgerFile.path}
+                        </span>
+                      </div>
+                      
+                      <button
+                        onClick={() => handleCopyCode(selectedLedgerFile)}
+                        className="text-xs font-bold text-zinc-600 hover:text-indigo-600 bg-white border border-zinc-200 px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5 shadow-2xs hover:shadow-xs active:bg-zinc-50"
+                      >
+                        {copiedFile === selectedLedgerFile.name ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 text-emerald-600 animate-scale-up" />
+                            <span className="text-emerald-700 font-extrabold">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3.5 w-3.5" />
+                            <span>Copy Source</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <p className="text-xs text-zinc-500 leading-relaxed font-medium">
+                      {selectedLedgerFile.description}
+                    </p>
+                  </div>
+
+                  {/* Code Viewer */}
+                  <div className="relative">
+                    <pre className="bg-zinc-900 text-zinc-200 p-4 rounded-xl text-xs font-mono overflow-auto max-h-[480px] leading-relaxed select-all">
+                      <code>{selectedLedgerFile.code}</code>
+                    </pre>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            {/* 6.3 - 6.9 Subsections detailed in plain text specifications */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              <div id="ledger-models" className="scroll-mt-24 p-5 rounded-xl border border-zinc-150 bg-white space-y-2">
+                <h4 className="text-sm font-bold text-zinc-900 flex items-center gap-1.5">
+                  <FileText className="h-4 w-4 text-indigo-600" />
+                  6.3 Domain Model Dataclasses
+                </h4>
+                <p className="text-xs text-zinc-500 leading-relaxed">
+                  Plain data objects hold states like <code className="bg-zinc-50 px-1 py-0.5 rounded text-zinc-800">Account</code>, <code className="bg-zinc-50 px-1 py-0.5 rounded text-zinc-800">JournalLine</code>, and <code className="bg-zinc-50 px-1 py-0.5 rounded text-zinc-800">JournalEntry</code>. Debits and credits are aggregated per-currency upon validation. Totals are summed using custom sign mapping (credits add, debits subtract) to verify that balance equates strictly to zero inside <code className="text-indigo-600">is_balanced()</code>.
+                </p>
+              </div>
+
+              <div id="ledger-service" className="scroll-mt-24 p-5 rounded-xl border border-zinc-150 bg-white space-y-2">
+                <h4 className="text-sm font-bold text-zinc-900 flex items-center gap-1.5">
+                  <Terminal className="h-4 w-4 text-indigo-600" />
+                  6.4 Core Transactional Posting
+                </h4>
+                <p className="text-xs text-zinc-500 leading-relaxed">
+                  The <code className="bg-zinc-50 px-1 py-0.5 rounded text-zinc-800">post_entry()</code> mechanism executes sequentially. It locks row states for account records using <code className="text-xs bg-zinc-50 px-1 py-0.5 rounded text-rose-600 font-mono">SELECT ... FOR UPDATE</code>. This serializes all active postings to the exact same accounts, fully preventing concurrent balance write hazards.
+                </p>
+              </div>
+
+              <div id="ledger-operations" className="scroll-mt-24 p-5 rounded-xl border border-zinc-150 bg-white space-y-2">
+                <h4 className="text-sm font-bold text-zinc-900 flex items-center gap-1.5">
+                  <Coins className="h-4 w-4 text-indigo-600" />
+                  6.5 High-Level Business Operations
+                </h4>
+                <p className="text-xs text-zinc-500 leading-relaxed">
+                  Thin execution adapters wrapper ledger events like <code className="text-zinc-800 font-medium font-mono">deposit</code>, <code className="text-zinc-800 font-medium font-mono">withdraw</code>, <code className="text-zinc-800 font-medium font-mono">transfer</code>, <code className="text-zinc-800 font-medium font-mono">charge_fee</code>, and <code className="text-zinc-800 font-medium font-mono">convert_currency</code>. These translate inputs into precise balances in the corresponding currency lines.
+                </p>
+              </div>
+
+              <div id="ledger-helpers" className="scroll-mt-24 p-5 rounded-xl border border-zinc-150 bg-white space-y-2">
+                <h4 className="text-sm font-bold text-zinc-900 flex items-center gap-1.5">
+                  <BookOpen className="h-4 w-4 text-indigo-600" />
+                  6.6 Decimal Minor-Unit Arithmetic
+                </h4>
+                <p className="text-xs text-zinc-500 leading-relaxed">
+                  Currency fractions are parsed with <code className="text-zinc-800 font-medium font-mono">Decimal</code> types utilizing <code className="text-zinc-800 font-medium font-mono">ROUND_HALF_UP</code> algorithms. Fractional balances are shifted based on currency mapping constants (e.g., ZAR scales by 2 places, XOF by 0) to output exact ledger integers.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      )}
+
+      {/* 7. Quick Reference Matrix */}
       {isSectionActive('matrix') && (
         <section id="matrix" className="scroll-mt-24 space-y-8 animate-fade-in">
           <div className="border-b border-zinc-150 pb-5">
@@ -720,7 +1003,7 @@ Body: symbol=BTCUSDT&side=SELL&quantity=0.01&price=62500&stopPrice=58500&stopLim
               Reference Specifications
             </span>
             <h2 className="text-2xl font-bold tracking-tight text-zinc-900 mt-3 sm:text-3xl">
-              6. Quick Reference Matrix
+              7. Quick Reference Matrix
             </h2>
             <p className="mt-2 text-sm text-zinc-500">
               Fast comparison of broker environments, restrictions, and parameters.
